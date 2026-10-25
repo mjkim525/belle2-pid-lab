@@ -1,0 +1,379 @@
+:root {
+  color-scheme: light;
+  --bg: #f3f6f7;
+  --ink: #163443;
+  --muted: #546c77;
+  --line: #d8e2e6;
+  --pi: #147f96;
+  --kaon: #d66a2d;
+  --paper: #fff;
+  --soft: #edf5f5;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font:
+    15px/1.65 -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+main {
+  max-width: 1140px;
+  margin: auto;
+  padding: 32px 28px 50px;
+}
+h1 {
+  font-size: 28px;
+  margin: 0;
+  letter-spacing: -0.7px;
+}
+h2 {
+  font-size: 21px;
+  line-height: 1.4;
+  margin: 0 0 10px;
+}
+h3 {
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+p {
+  margin: 8px 0 14px;
+}
+.muted {
+  color: var(--muted);
+}
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--muted);
+}
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+.badge {
+  background: #dfecef;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.toolbar {
+  background: var(--ink);
+  color: white;
+  padding: 17px 22px;
+  border-radius: 12px;
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.toolbar label {
+  min-width: 150px;
+}
+.toolbar input {
+  flex: 1;
+  min-width: 130px;
+  accent-color: #a8e2e9;
+}
+.toolbar output {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  min-width: 140px;
+}
+.tabs {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  padding: 18px 0 14px;
+}
+.tabs button {
+  border: 0;
+  background: transparent;
+  padding: 10px 14px;
+  border-radius: 7px;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+.tabs button[aria-selected="true"] {
+  background: var(--ink);
+  color: white;
+}
+.panel {
+  background: var(--paper);
+  border-radius: 14px;
+  padding: 25px 26px;
+  box-shadow: 0 4px 20px #12304207;
+  min-height: 500px;
+}
+.panel[hidden] {
+  display: none;
+}
+.controls {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 12px 0;
+  margin-bottom: 10px;
+}
+.controls label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.controls input {
+  accent-color: var(--pi);
+}
+button,
+select {
+  font: inherit;
+}
+select {
+  border: 1px solid var(--line);
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: white;
+  color: var(--ink);
+}
+button.small {
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--ink);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.viz {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.viz svg {
+  display: block;
+  width: 100%;
+  min-width: 680px;
+  height: auto;
+}
+.viz text {
+  font-family: inherit;
+  fill: var(--ink);
+  font-size: 16px;
+}
+.viz .minor {
+  fill: var(--muted);
+  font-size: 15px;
+}
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+.readout {
+  display: flex;
+  gap: 14px 30px;
+  flex-wrap: wrap;
+  padding: 10px 0;
+  font-variant-numeric: tabular-nums;
+}
+.key {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--pi);
+}
+.swatch.k {
+  background: var(--kaon);
+  border-radius: 1px;
+}
+.explain {
+  background: var(--soft);
+  padding: 13px 16px;
+  border-radius: 7px;
+  margin-top: 10px;
+}
+.formula {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 17px;
+}
+.note {
+  font-size: 13px;
+  color: var(--muted);
+}
+details {
+  border-top: 1px solid var(--line);
+  padding-top: 13px;
+  margin-top: 16px;
+}
+summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+a {
+  color: #087387;
+  text-underline-offset: 3px;
+}
+.resource {
+  margin-top: 23px;
+}
+.resource ul {
+  padding-left: 20px;
+  margin: 10px 0;
+}
+.resource li {
+  margin: 5px 0;
+}
+.status {
+  min-height: 24px;
+  color: #ae4926;
+  font-size: 13px;
+}
+.meter {
+  position: relative;
+  height: 34px;
+  background: linear-gradient(90deg, #d6eef2, #f8eee5);
+  border-radius: 6px;
+  margin: 18px 0 9px;
+}
+.needle {
+  position: absolute;
+  top: -4px;
+  height: 42px;
+  width: 3px;
+  background: var(--ink);
+  transform: translateX(-50%);
+}
+.meter-labels {
+  display: flex;
+  justify-content: space-between;
+}
+.det-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.det-list button {
+  border: 1px solid var(--line);
+  padding: 8px 5px;
+  border-radius: 6px;
+  background: white;
+  color: var(--ink);
+  cursor: pointer;
+}
+.det-list button[aria-pressed="true"] {
+  background: var(--ink);
+  color: white;
+}
+.footer {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 18px;
+}
+.pill {
+  border-radius: 4px;
+  padding: 2px 7px;
+  background: #e9f2f3;
+  font-size: 12px;
+}
+.red {
+  color: #ae4926;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-variant-numeric: tabular-nums;
+}
+th,
+td {
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  padding: 9px 10px;
+}
+th {
+  font-weight: 500;
+  background: var(--soft);
+}
+.source-line {
+  font-size: 13px;
+  margin-top: 14px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+@media (max-width: 700px) {
+  main {
+    padding: 20px 14px;
+  }
+  .hero {
+    align-items: flex-start;
+  }
+  h1 {
+    font-size: 24px;
+  }
+  .badge {
+    display: none;
+  }
+  .panel {
+    padding: 20px 16px;
+  }
+  .toolbar {
+    gap: 8px;
+  }
+  .split {
+    grid-template-columns: 1fr;
+  }
+  .det-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .tabs button {
+    padding: 8px 10px;
+  }
+  .controls label {
+    width: 100%;
+  }
+  .controls input {
+    flex: 1;
+  }
+}
+
+input:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+#top-values,
+#arich-values {
+  overflow-x: auto;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--pi);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}

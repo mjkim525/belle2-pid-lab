@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Belle II · PID Lab</title>
+    <meta
+      name="description"
+      content="Belle II의 CDC, TOP, ARICH, ECL과 PID likelihood를 직접 조작하며 이해하는 한국어 교육용 도구."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main>
+      <header class="hero">
+        <div>
+          <div class="eyebrow">JOURNAL CLUB · DETECTOR PRINCIPLES</div>
+          <h1>Belle II · PID Lab</h1>
+          <div class="muted">입자가 남긴 신호에서 π와 K를 구분하기까지</div>
+        </div>
+        <span class="badge">B → Kπ / ππ · PRD 109, 012001</span>
+      </header>
+      <div class="toolbar">
+        <label for="momentum">입자의 운동량 p</label
+        ><input
+          id="momentum"
+          type="range"
+          min="0.4"
+          max="4.5"
+          step="0.01"
+          value="2.6"
+        /><output id="p-value" for="momentum">2.60 GeV/c</output>
+      </div>
+      <div class="note" style="margin-top: 8px">
+        기본값 2.6 GeV/c는 B rest frame의 two-body daughter 운동량에 가까운
+        예다. 실험실 운동량은 boost와 방향에 따라 달라진다.
+      </div>
+      <nav class="tabs" role="tablist" aria-label="검출 원리">
+        <button
+          role="tab"
+          id="tab-detector"
+          aria-controls="detector"
+          aria-selected="true"
+          data-tab="detector"
+        >
+          검출기·채널
+        </button>
+        <button
+          role="tab"
+          id="tab-dedx"
+          aria-controls="dedx"
+          aria-selected="false"
+          data-tab="dedx"
+        >
+          CDC · dE/dx
+        </button>
+        <button
+          role="tab"
+          id="tab-top"
+          aria-controls="top"
+          aria-selected="false"
+          data-tab="top"
+        >
+          TOP · 광자의 시간
+        </button>
+        <button
+          role="tab"
+          id="tab-arich"
+          aria-controls="arich"
+          aria-selected="false"
+          data-tab="arich"
+        >
+          ARICH · 초점과 링
+        </button>
+        <button
+          role="tab"
+          id="tab-ecl"
+          aria-controls="ecl"
+          aria-selected="false"
+          data-tab="ecl"
+        >
+          ECL · π⁰와 Kₛ
+        </button>
+        <button
+          role="tab"
+          id="tab-pid"
+          aria-controls="pid"
+          aria-selected="false"
+          data-tab="pid"
+        >
+          PID likelihood
+        </button>
+      </nav>
+      <section
+        class="panel"
+        id="detector"
+        role="tabpanel"
+        aria-labelledby="tab-detector"
+      >
+        <h2>각 붕괴를 어느 장치에서 보는가</h2>
+        <p>
+          채널을 고르고 서브 검출기를 눌러 보자. 안쪽부터 바깥쪽으로 추적기 →
+          hadron PID → ECL → solenoid → KLM이 놓인다. ARICH는 forward endcap에
+          있다.
+        </p>
+        <div class="controls">
+          <label
+            >붕괴 채널
+            <select id="channel">
+              <option value="kpi">B⁰ → K⁺π⁻</option>
+              <option value="kpi0">B⁺ → K⁺π⁰</option>
+              <option value="kspi">B⁺ → Kₛ⁰π⁺</option>
+              <option value="kspi0">B⁰ → Kₛ⁰π⁰</option>
+              <option value="pipi">B⁰ → π⁺π⁻</option>
+              <option value="pipi0">B⁺ → π⁺π⁰</option>
+            </select></label
+          >
+        </div>
+        <div
+          id="detector-svg"
+          class="viz"
+          data-label="Belle II barrel과 forward 검출기 개념도"
+        ></div>
+        <div class="det-list" id="device-buttons"></div>
+        <div id="device-detail" class="explain"></div>
+        <div id="channel-detail" class="note" style="margin-top: 12px"></div>
+        <div class="source-line">
+          <a
+            href="https://www2.kek.jp/proffice/Pamphlets/IPNS/BELLEII_E.pdf#page=6"
+            target="_blank"
+            rel="noopener"
+            >실제 cutaway · KEK booklet PDF 6–7쪽</a
+          >
+          ·
+          <a
+            href="https://www2.kek.jp/outreach/vtour/"
+            target="_blank"
+            rel="noopener"
+            >KEK 360° 투어</a
+          >
+        </div>
+      </section>
+      <section
+        class="panel"
+        id="dedx"
+        role="tabpanel"
+        aria-labelledby="tab-dedx"
+        hidden
+      >
+        <h2>CDC: 곡률로 운동량, 전리 신호로 dE/dx</h2>
+        <p>
+          기체를 지나는 charged particle이 전자를 떼어 내고, drift한 전자가
+          wire에서 신호를 만든다. 여러 cell의 전하를 경로 길이로 보정해 종별
+          예상과 비교한다. SVD의 dE/dx도 PID 정보를 제공한다.
+        </p>
+        <div class="viz" id="dedx-svg"></div>
+        <div class="readout" id="dedx-values"></div>
+        <div class="explain">
+          같은 p라도 βγ = p/m가 다르다. 낮은 운동량의 1/β² 증가와 높은 운동량의
+          relativistic rise가 함께 있어, K가 항상 π보다 큰 dE/dx를 보이는 것은
+          아니다.
+        </div>
+        <details>
+          <summary>모형과 실제 CDC의 차이</summary>
+          <p class="note">
+            Bethe–Bloch 유사 곡선이며 단위는 임의 정규화다. I = 40 eV를
+            설명용으로 사용하고 density/shell correction, 측정 분산, gas
+            calibration은 생략했다. 전자에는 이 heavy-particle 식을 적용하지
+            않는다. 실제 장치는 분포의 tail을 제거한 truncated mean과 data
+            calibration으로 likelihood를 만든다.
+          </p>
+        </details>
+        <div class="source-line">
+          <a
+            href="https://docs.belle2.org/files/2716/BELLE2-TALK-CONF-2019-126/1/BELLE2-TALK-CONF-2019-126.pdf#page=10"
+            target="_blank"
+            rel="noopener"
+            >실제 CDC dE/dx band · PDF 10쪽</a
+          >
+        </div>
+      </section>
+      <section
+        class="panel"
+        id="top"
+        role="tabpanel"
+        aria-labelledby="tab-top"
+        hidden
+      >
+        <h2>TOP: 내부반사 경로와 검출 위치–시간 패턴</h2>
+        <p>
+          Track에 대한 Cherenkov 방출각이 질량 가설에 따라 달라진다. 같은 파장의
+          광자는 같은 속도로 전파되지만, 광학 경로와 도착 위치·시간이 달라진다.
+        </p>
+        <div class="controls">
+          <label
+            >방출점 z
+            <input
+              id="z"
+              type="range"
+              min="0.4"
+              max="2.4"
+              step="0.01"
+              value="1.5"
+            /><output id="z-value">1.50 m</output></label
+          ><label
+            >방위각 φ
+            <input
+              id="phi"
+              type="range"
+              min="-130"
+              max="-50"
+              step="1"
+              value="-60"
+            /><output id="phi-value">−60°</output></label
+          ><button class="small" id="animate">광자 이동 보기</button
+          ><label
+            ><input id="include-tof" type="checkbox" checked />입자 flight time
+            포함</label
+          >
+        </div>
+        <div class="viz" id="top-svg"></div>
+        <div class="viz" id="top-map"></div>
+        <div id="top-values"></div>
+        <div class="explain">
+          <span class="formula">t_hit = L_track / (βc) + n_g ℓ_opt / c</span
+          ><br />위는 선택한 한 광선의 bar 평면 투영이다. 이 track 기하에서는 두
+          종의 x–z 투영 경로가 겹칠 수 있으며 두께 방향 경로 차이는 보이지
+          않는다. 이동은 공통 모델 시간으로 표시한다. 아래는 여러 방위각의
+          direct photon 패턴이다. 두 패턴의 차이는 통계적 PID 성능이나 측정
+          분해능을 뜻하지 않는다.
+        </div>
+        <details>
+          <summary>기하·단순화</summary>
+          <p class="note">
+            2.5 m × 0.45 m × 0.02 m 직육면체, track 방향 +y, readout z=0.
+            n_phase=1.47, n_group=1.50은 파장을 고정한 설명용 상수다. Track
+            flight length 1.2 m. 전반사 조건을 통과해 readout 쪽으로 직접 가는
+            광자만 그린다. 실제 mirror·prism·chromatic dispersion·검출효율·시간
+            분해능·background를 생략했다. 반사 횟수에 별도의 시간 지연을 더하지
+            않는다.
+          </p>
+        </details>
+        <div class="source-line">
+          <a
+            href="https://indico.cern.ch/event/1044975/contributions/4663810/attachments/2394825/4094513/TOP_VCI2022_v3.pdf#page=4"
+            target="_blank"
+            rel="noopener"
+            >실제 optics: PDF 4쪽</a
+          >
+          ·
+          <a
+            href="https://indico.cern.ch/event/1044975/contributions/4663810/attachments/2394825/4094513/TOP_VCI2022_v3.pdf#page=10"
+            target="_blank"
+            rel="noopener"
+            >실제 photon hit vs 질량 가설: PDF 10쪽</a
+          >
+        </div>
+      </section>
+      <section
+        class="panel"
+        id="arich"
+        role="tabpanel"
+        aria-labelledby="tab-arich"
+        hidden
+      >
+        <h2>ARICH: 두 aerogel 층이 ring의 번짐을 줄인다</h2>
+        <p>
+          같은 운동량에서는 π가 K보다 빨라 Cherenkov 각이 크다. 두 층의 굴절률을
+          달리해 서로 다른 방출 깊이에서 나온 빛이 센서 면에서 가까이 모이도록
+          한다.
+        </p>
+        <div class="controls">
+          <label
+            ><input id="dual" type="checkbox" checked />이중 굴절률 사용</label
+          ><label
+            >n₂
+            <input
+              id="n2"
+              type="range"
+              min="1.040"
+              max="1.070"
+              step="0.001"
+              value="1.055"
+            /><output id="n2-value">1.055</output></label
+          ><label
+            >공기 간격
+            <input
+              id="gap"
+              type="range"
+              min="0.12"
+              max="0.26"
+              step="0.005"
+              value="0.20"
+            /><output id="gap-value">20 cm</output></label
+          >
+        </div>
+        <div class="viz" id="arich-svg"></div>
+        <div id="arich-values"></div>
+        <div class="explain">
+          <span class="formula"
+            >cos θ_C = 1 / (nβ), &nbsp; p_threshold = m / √(n²−1)</span
+          ><br />방출 threshold 아래인 입자는 ring이 없다. 이중층의 두 ring이
+          모든 β에서 완전히 일치하는 것은 아니다. “이중 굴절률”을 끄면 두께가
+          같은 4 cm 단일 굴절률 slab와 비교한다.
+        </div>
+        <details>
+          <summary>기하·단순화</summary>
+          <p class="note">
+            각 층 2 cm, n₁=1.045, 기본 n₂=1.055. 정상 입사·각 층 중앙 방출·Snell
+            굴절을 사용한다. 공기 간격은 downstream 면에서 센서까지이며 기본 20
+            cm는 근사 기하다. 센서 화소, 광자 수, scattering, 분해능은 생략했다.
+            광선은 π/K 두 종, 각 2층의 대표 광선이며 곡선 폭은 실측 resolution이
+            아니다.
+          </p>
+        </details>
+        <div class="source-line">
+          <a
+            href="https://arxiv.org/pdf/1603.02503#page=4"
+            target="_blank"
+            rel="noopener"
+            >원리 그림 Fig.2 · PDF 4쪽</a
+          >
+          ·
+          <a
+            href="https://arxiv.org/pdf/1603.02503#page=5"
+            target="_blank"
+            rel="noopener"
+            >focusing Fig.3 · PDF 5쪽</a
+          >
+        </div>
+      </section>
+      <section
+        class="panel"
+        id="ecl"
+        role="tabpanel"
+        aria-labelledby="tab-ecl"
+        hidden
+      >
+        <h2>ECL의 두 photon으로 π⁰를 복원한다</h2>
+        <p>
+          Photon은 tracking hit 없이 CsI(Tl)에 전자기 shower와 cluster를 남긴다.
+          π⁰는 직접 PID하지 않고 두 cluster의 에너지·방향으로 재구성한다.
+        </p>
+        <div class="controls">
+          <label
+            >π⁰ 에너지
+            <input
+              id="energy"
+              type="range"
+              min="0.2"
+              max="4.5"
+              step="0.01"
+              value="2.6"
+            /><output id="energy-value">2.60 GeV</output></label
+          ><label
+            >rest-frame cos θ*
+            <input
+              id="asymmetry"
+              type="range"
+              min="-0.95"
+              max="0.95"
+              step="0.01"
+              value="0"
+            /><output id="asymmetry-value">0.00</output></label
+          >
+        </div>
+        <div class="viz" id="ecl-svg"></div>
+        <div class="readout" id="ecl-values"></div>
+        <div class="explain">
+          <span class="formula">m²_γγ = 2 E₁ E₂ (1 − cos ψ)</span><br />논문은
+          각 photon E &gt; 30 MeV와 두 photon 사이 각 ψ &lt; 0.4 rad 등을
+          요구한다. 이 화면의 통과 표시는 이 두 조건만 확인하며 전체 선택 효율을
+          뜻하지 않는다.
+        </div>
+        <details open>
+          <summary>Kₛ⁰와 KLM을 혼동하지 않기</summary>
+          <p>
+            Kₛ⁰ → π⁺π⁻는 떨어진 vertex와 두 charged track으로 재구성한다.
+            PXD/SVD/CDC의 위치·운동량과 vertex topology를 이용하는 V0
+            재구성이다. KLM의 K_L 검출이나 charged K/π PID와 다른 작업이다.
+            ECL은 electron의 E/p·shower shape에도 기여하고, KLM은 μ의 투과성과
+            neutral hadron cluster를 사용한다. 이번 논문의 K⁰ 신호는 Kₛ⁰ 경로다.
+          </p>
+        </details>
+        <div class="source-line">
+          <a
+            href="https://www2.kek.jp/proffice/Pamphlets/IPNS/BELLEII_E.pdf#page=6"
+            target="_blank"
+            rel="noopener"
+            >ECL / CDC / VXD 설명 · PDF 6쪽</a
+          >
+        </div>
+      </section>
+      <section
+        class="panel"
+        id="pid"
+        role="tabpanel"
+        aria-labelledby="tab-pid"
+        hidden
+      >
+        <h2>장치별 likelihood를 하나의 PID 비로</h2>
+        <p>
+          측정 신호가 π 또는 K 가설에서 얼마나 그럴듯한지 비교한다. 아래 입력은
+          사용자가 움직이는 설명용 log-likelihood 차이이며 실험 데이터가 아니다.
+        </p>
+        <div class="controls">
+          <label
+            >입자 방향
+            <select id="region">
+              <option value="barrel">Barrel: CDC + TOP</option>
+              <option value="forward">Forward: CDC + ARICH</option>
+            </select></label
+          >
+        </div>
+        <div class="controls">
+          <label
+            >CDC: log L_K − log L_π
+            <input
+              id="cdc"
+              type="range"
+              min="-5"
+              max="5"
+              step="0.1"
+              value="1"
+            /><output id="cdc-value">1.0</output></label
+          ><label
+            ><span id="optical-label">TOP</span>: log L_K − log L_π
+            <input
+              id="optical"
+              type="range"
+              min="-5"
+              max="5"
+              step="0.1"
+              value="1.5"
+            /><output id="optical-value">1.5</output></label
+          >
+        </div>
+        <div class="viz" id="pid-svg"></div>
+        <div class="readout" id="pid-value"></div>
+        <div class="meter" aria-hidden="true">
+          <span class="needle" id="pid-needle"></span>
+        </div>
+        <div class="meter-labels">
+          <span>K-like · R_π → 0</span><span>R_π = 0.5</span
+          ><span>π-like · R_π → 1</span>
+        </div>
+        <div class="explain">
+          <span class="formula"
+            >log L_h = Σ_d log L_h,d &nbsp; → &nbsp; R_π = L_π / (L_π +
+            L_K)</span
+          ><br />양수 입력은 K 가설을, 음수 입력은 π 가설을 지지한다.
+        </div>
+        <p class="note">
+          논문은 이와 같은 L_π/(L_π+L_K) 비로 pion-/kaon-enriched 표본을 만든다.
+          같은 track에 TOP와 ARICH를 항상 동시에 더하지 않는다. 실제 PID에는 SVD
+          등 사용 가능한 다른 정보도 들어간다.
+        </p>
+        <details>
+          <summary>왜 곧바로 “pion 확률”이라고 부르면 안 되나</summary>
+          <p class="note">
+            Likelihood 곱은 주어진 track 정보에서 장치 응답을 독립으로 보는
+            근사다. 공통 운동량·각도 오차와 상관, prior, 효율 보정을 고려하지
+            않은 비율은 보정된 posterior가 아니다. 실제 likelihood
+            함수·threshold·calibration은 데이터로 정한다. 여기서는 PID 비의
+            부호와 조합 구조만 설명한다.
+          </p>
+        </details>
+      </section>
+      <div class="status" role="status" id="status"></div>
+      <section class="resource">
+        <h3>공식 그림과 실제 장치로 이어 보기</h3>
+        <ul>
+          <li>
+            <a
+              href="https://software.belle2.org/release-09-00-15/sphinx/online_book/fundamentals/02-datataking.html"
+              target="_blank"
+              rel="noopener"
+              >Belle II online book</a
+            >: 전체 구조, quartz 내부반사 사진, ARICH와 ECL.
+          </li>
+          <li>
+            <a
+              href="https://indico.cern.ch/event/1044975/contributions/4663810/attachments/2394825/4094513/TOP_VCI2022_v3.pdf"
+              target="_blank"
+              rel="noopener"
+              >TOP VCI2022</a
+            >: PDF 4–5쪽 optics / likelihood, 10쪽 실제 위치–시간 패턴.
+          </li>
+          <li>
+            <a
+              href="https://arxiv.org/pdf/1603.02503"
+              target="_blank"
+              rel="noopener"
+              >ARICH prototype 논문</a
+            >: Fig.2–3 원리·focusing, Fig.10 실제 photon hits.
+          </li>
+        </ul>
+      </section>
+      <footer class="footer">
+        교육용 계산 · 실제 detector simulation / PID efficiency의 재현이 아님 ·
+        브라우저에서 계산 · 실험 데이터 사용 안 함 · 2026-10-25
+      </footer>
+    </main>
+    <script src="./physics.js" defer></script>
+    <script src="./app.js" defer></script>
+  </body>
+</html>
