@@ -516,19 +516,52 @@
     renderECL();
     renderPID();
   }
+  const fitFrame = $("fit-frame");
+  let fitSizeObserver = null;
+  function sizeFitFrame() {
+    if (activeTab !== "fit") return;
+    const body = fitFrame.contentDocument?.body;
+    if (!body) return;
+    const height = Math.ceil(body.getBoundingClientRect().height);
+    if (height > 0 && height < 10000)
+      fitFrame.style.height = Math.max(640, height) + "px";
+  }
+  fitFrame.addEventListener("load", () => {
+    fitSizeObserver?.disconnect();
+    const body = fitFrame.contentDocument?.body;
+    if (body) {
+      fitSizeObserver = new ResizeObserver(sizeFitFrame);
+      fitSizeObserver.observe(body);
+      sizeFitFrame();
+    }
+  });
+  function activateTab(tab, updateHash = true) {
+    const button = Array.from(document.querySelectorAll("[data-tab]")).find(
+      (candidate) => candidate.dataset.tab === tab,
+    );
+    if (!button) return;
+    activeTab = tab;
+    for (const b of document.querySelectorAll("[data-tab]"))
+      b.setAttribute("aria-selected", b === button);
+    for (const p of document.querySelectorAll(".panel"))
+      p.hidden = p.id !== activeTab;
+    $("momentum-controls").hidden = activeTab === "fit";
+    if (activeTab === "fit") {
+      if (!fitFrame.getAttribute("src")) fitFrame.src = fitFrame.dataset.src;
+      sizeFitFrame();
+    }
+    if (animationFrame) {
+      cancelAnimationFrame(animationFrame);
+      animationFrame = null;
+    }
+    if (model && activeTab === "top") renderTOP();
+    if (updateHash) history.replaceState(null, "", "#" + activeTab);
+  }
   for (const button of document.querySelectorAll("[data-tab]"))
-    button.addEventListener("click", () => {
-      activeTab = button.dataset.tab;
-      for (const b of document.querySelectorAll("[data-tab]"))
-        b.setAttribute("aria-selected", b === button);
-      for (const p of document.querySelectorAll(".panel"))
-        p.hidden = p.id !== activeTab;
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame);
-        animationFrame = null;
-      }
-      if (model && activeTab === "top") renderTOP();
-    });
+    button.addEventListener("click", () => activateTab(button.dataset.tab));
+  window.addEventListener("hashchange", () =>
+    activateTab(location.hash.slice(1), false),
+  );
   for (const input of document.querySelectorAll("input[type=range],#dual"))
     input.addEventListener("input", update);
   $("channel").addEventListener("change", renderDetector);
@@ -548,4 +581,5 @@
     animationFrame = requestAnimationFrame(step);
   });
   update();
+  activateTab(location.hash.slice(1) || "detector", false);
 })();

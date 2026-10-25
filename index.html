@@ -6,7 +6,7 @@
     <title>Belle II · PID Lab</title>
     <meta
       name="description"
-      content="Belle II의 CDC, TOP, ARICH, ECL과 PID likelihood를 직접 조작하며 이해하는 한국어 교육용 도구."
+      content="Belle II의 검출기, PID likelihood와 분기비·CP 비대칭의 동시 fit을 직접 조작하며 이해하는 한국어 교육용 도구."
     />
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -16,10 +16,11 @@
         <div>
           <div class="eyebrow">JOURNAL CLUB · DETECTOR PRINCIPLES</div>
           <h1>Belle II · PID Lab</h1>
-          <div class="muted">입자가 남긴 신호에서 π와 K를 구분하기까지</div>
+          <div class="muted">입자의 신호에서 PID, 분기비와 CP 비대칭까지</div>
         </div>
         <span class="badge">B → Kπ / ππ · PRD 109, 012001</span>
       </header>
+      <div id="momentum-controls">
       <div class="toolbar">
         <label for="momentum">입자의 운동량 p</label
         ><input
@@ -35,7 +36,8 @@
         기본값 2.6 GeV/c는 B rest frame의 two-body daughter 운동량에 가까운
         예다. 실험실 운동량은 boost와 방향에 따라 달라진다.
       </div>
-      <nav class="tabs" role="tablist" aria-label="검출 원리">
+      </div>
+      <nav class="tabs" role="tablist" aria-label="검출 원리와 분석">
         <button
           role="tab"
           id="tab-detector"
@@ -89,6 +91,9 @@
           data-tab="pid"
         >
           PID likelihood
+        </button>
+        <button role="tab" id="tab-fit" aria-controls="fit" aria-selected="false" data-tab="fit">
+          분기비·CP fit
         </button>
       </nav>
       <section
@@ -466,6 +471,43 @@
           </p>
         </details>
       </section>
+      <section class="panel" id="fit" role="tabpanel" aria-labelledby="tab-fit" hidden>
+        <h2>두 물리량으로 B와 B̄ 표본을 동시에 설명하기</h2>
+        <p>
+          분기비 𝓑를 키우면 두 표본의 신호가 함께 늘어난다. A<sub>CP</sub>를
+          키우면 총 신호는 유지하면서 B 쪽은 줄고 B̄ 쪽은 늘어난다. 슬라이더로
+          예측을 움직인 뒤 ‘두 값을 동시에 fit’을 눌러 고정된 모의 데이터와
+          비교해 보자.
+        </p>
+        <iframe id="fit-frame" class="fit-frame" title="분기비와 CP 비대칭을 조절하는 모의 동시 fit" data-src="./fit-lab.html" referrerpolicy="no-referrer"></iframe>
+        <div class="explain">
+          <span class="formula">N<sub>q</sub> = 25 𝓑<sub>6</sub> (1 − q A<sub>CP</sub>)</span>
+          <br />𝓑<sub>6</sub>는 분기비를 10⁻⁶ 단위로 쓴 값이다. q = +1은 B,
+          q = −1은 B̄이며 25는 설명용 정규화다. 두 곡선에는 각 표본당 기대 수율
+          300개의 균일 배경이 더해진다. 위의 ‘총 신호 기대 수율’에는 이 배경이
+          포함되지 않는다.
+        </div>
+        <details>
+          <summary>모의 fit과 논문 식 (3)의 관계</summary>
+          <p class="note">
+            이 예제는 𝓑 = 24 × 10⁻⁶, A<sub>CP</sub> = +0.20으로 생성한 한
+            모의 표본을 계속 사용한다. 신호는 폭 18 MeV의 Gaussian이고, 고정
+            배경과 함께 10 MeV bin의 Poisson likelihood를 계산한다. 모의
+            데이터의 통계적 요동 때문에 최적 fit 값은 생성값과 조금 다를 수 있다.
+          </p>
+          <p class="note">
+            논문은 (ΔE, C′)의 unbinned extended likelihood를 사용하고
+            feed-across와 배경을 함께 모델링한다. 여기서는 전하별 효율을 같게
+            두고 tagging, mixing, 검출기 전하 비대칭 및 feed-across를 생략했다.
+            Kₛ⁰π⁰의 식 (4)에 들어가는 희석과 tag 보정은 이 화면에 적용하지 않는다.
+            −2Δln L은 이 모의 데이터의 최적 fit에 대한 차이이며 유의도 σ가 아니다.
+          </p>
+        </details>
+        <div class="source-line">
+          <a href="./fit-lab.html" target="_blank" rel="noopener">모의 fit 크게 보기</a> ·
+          <a href="https://doi.org/10.1103/PhysRevD.109.012001" target="_blank" rel="noopener">논문 Sec. IV · 식 (3)–(4)</a>
+        </div>
+      </section>
       <div class="status" role="status" id="status"></div>
       <section class="resource">
         <h3>공식 그림과 실제 장치로 이어 보기</h3>
@@ -498,7 +540,7 @@
       </section>
       <footer class="footer">
         교육용 계산 · 실제 detector simulation / PID efficiency의 재현이 아님 ·
-        브라우저에서 계산 · 실험 데이터 사용 안 함 · 2026-10-25
+        브라우저에서 계산 · 실험 데이터 사용 안 함 · 2026-10-26
       </footer>
     </main>
     <script src="./physics.js" defer></script>

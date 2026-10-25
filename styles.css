@@ -118,6 +118,14 @@ p {
 .panel[hidden] {
   display: none;
 }
+.fit-frame {
+  display: block;
+  width: 100%;
+  min-height: 640px;
+  height: 640px;
+  border: 0;
+  color-scheme: light;
+}
 .controls {
   display: flex;
   gap: 20px;

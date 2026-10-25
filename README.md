@@ -12,14 +12,17 @@ Belle II 검출기와 입자 식별 원리를 한국어로 살펴보는 교육�
 - **ARICH:** 이중 aerogel의 굴절률·간격·운동량을 바꾸며 ring focusing과 방출 문턱을 봅니다.
 - **ECL:** π⁰ → γγ의 에너지·방향·불변질량과 Kₛ vertex 재구성을 구분합니다.
 - **PID likelihood:** CDC와 TOP 또는 ARICH 정보가 Lπ/(Lπ+LK)로 합쳐지는 과정을 봅니다.
+- **[분기비·CP fit](https://mjkim525.github.io/belle2-pid-lab/#fit):** 분기비와 CP 비대칭을 바꿔 B/B̄ 표본의 기대 수율을 비교하고, 고정된 모의 데이터에 두 파라미터를 동시에 맞춥니다.
 
-모든 계산은 브라우저 안에서 이루어집니다. Python 서버, 계정, 외부 패키지나 실험 데이터가 필요하지 않습니다. 공식 원자료를 여는 링크에는 인터넷 연결이 필요합니다.
+모든 계산은 브라우저 안에서 이루어집니다. Python 서버, 계정이나 실험 데이터가 필요하지 않습니다. 검출기·PID 탭은 추가 패키지 없이 작동하며, 분기비·CP fit 탭은 그래프용 D3를 CDN에서 불러오므로 인터넷 연결이 필요합니다. 공식 원자료를 여는 링크에도 인터넷 연결이 필요합니다.
 
 ## 이 모델의 범위
 
 실제 Belle II 검출기 시뮬레이션이나 PID 성능 예측이 아닙니다. ARICH는 정상 입사·각 층 중앙 방출·Snell 굴절, TOP는 직육면체 bar에서 전반사 조건을 통과한 direct photon을 사용합니다. ECL은 정확한 π⁰ two-body Lorentz boost이며, CDC는 임의 정규화의 heavy-particle Bethe–Bloch 유사 곡선입니다.
 
 광자 수, noise, detector resolution, prism, 곡면 mirror, chromatic dispersion과 acceptance calibration은 생략했습니다. 화면의 likelihood 비는 보정된 posterior probability가 아닙니다.
+
+분기비·CP fit은 전하별 효율이 같은 경우의 설명용 1차원 binned Poisson 모형입니다. 고정된 모의 데이터와 표본당 고정 배경 300개를 사용합니다. 논문의 실제 데이터나 2차원 unbinned fit을 재현하지 않으며 tagging, mixing, feed-across와 검출기 전하 비대칭은 생략합니다.
 
 ## 로컬에서 열기
 
@@ -49,6 +52,7 @@ python3 tests/verify_physics.py
 | `styles.css`                 | 화면 스타일                  |
 | `app.js`                     | 그림과 사용자 조작           |
 | `physics.js`                 | 물리 계산                    |
+| `fit-lab.html`               | 분기비·CP 비대칭 모의 동시 fit |
 | `tests/reference_physics.py` | 비교 기준인 원래 Python 모델 |
 | `tests/verify_physics.py`    | Python/JavaScript 계산 대조  |
 
